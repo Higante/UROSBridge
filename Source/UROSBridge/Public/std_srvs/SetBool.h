@@ -15,17 +15,17 @@ namespace std_srvs
 		class Request : public SrvRequest 
 		{
 		private:
-			uint8 Data;
+			bool Data;
 
 		public:
 			Request() { }
-			Request(uint8 InData) : Data(InData) {}
-			uint8 GetData() const { return Data; }
-			void SetData(uint8 InData) { Data = InData; }
+			Request(bool InData) : Data(InData) {}
+			bool GetData() const { return Data; }
+			void SetData(bool InData) { Data = InData; }
 
 			virtual void FromJson(TSharedPtr<FJsonObject> JsonObject) override 
 			{
-				Data = JsonObject->GetIntegerField("data");
+				Data = JsonObject->GetBoolField("data");
 			}
 
 			static Request GetFromJson(TSharedPtr<FJsonObject> JsonObject)
@@ -51,20 +51,20 @@ namespace std_srvs
 		class Response : public SrvResponse 
 		{
 		private:
-			uint8 Success;
+			bool Success;
 			FString Message;
 
 		public:
 			Response() {}
-			Response(uint8 InSuccess, FString InMessage) : Success(InSuccess), Message(InMessage) {}
-			uint8 GetSuccess() const { return Success; }
+			Response(bool InSuccess, FString InMessage) : Success(InSuccess), Message(InMessage) {}
+			bool GetSuccess() const { return Success; }
 			FString GetMessage() const { return Message; }
-			void SetSuccess(uint8 InSuccess) { Success = InSuccess; }
+			void SetSuccess(bool InSuccess) { Success = InSuccess; }
 			void SetMessage(FString InMessage) { Message = InMessage; }
 
 			virtual void FromJson(TSharedPtr<FJsonObject> JsonObject) override 
 			{
-				Success = JsonObject->GetIntegerField("success");
+				Success = JsonObject->GetBoolField("success");
 				Message = JsonObject->GetStringField("message");
 			}
 
@@ -77,14 +77,15 @@ namespace std_srvs
 
 			virtual FString ToString() const override
 			{
-				return TEXT("SetBool::Response { success = ") + FString::FromInt(Success) + TEXT(", ") +
+				FString BoolString = Success ? TEXT("True") : TEXT("False");
+				return TEXT("SetBool::Response { success = ") + BoolString + TEXT(", ") +
 					TEXT(" message = \"") + Message + TEXT("\" } ");
 			}
 
 			virtual TSharedPtr<FJsonObject> ToJsonObject() const 
 			{
 				TSharedPtr<FJsonObject> Object = MakeShareable<FJsonObject>(new FJsonObject());
-				Object->SetNumberField("success", Success);
+				Object->SetBoolField("success", Success);
 				Object->SetStringField("message", Message);
 				return Object;
 			}
